@@ -105,7 +105,10 @@ function App() {
     //Info in the textarea needs to be decoded before storage
     let tA = document.createElement('textarea');
     tA.innerHTML = form.get("details");
+
+    console.log(form.get("details"));
     const details = tA.value;
+    console.log(details);
 
     const verify = window.confirm(`[PID: ${pid}]Are you sure you want to submit?`);
     if(!verify) return;
