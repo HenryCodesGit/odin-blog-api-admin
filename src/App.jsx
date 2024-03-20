@@ -100,8 +100,12 @@ function App() {
     //Get details
     const form =  new FormData(event.target);
     const title = form.get("title");
-    const details = form.get("details");
     const pid = form.get("pid");
+
+    //Info in the textarea needs to be decoded before storage
+    let tA = document.createElement('textarea');
+    tA.innerHTML = form.get("details");
+    const details = tA.value;
 
     const verify = window.confirm(`[PID: ${pid}]Are you sure you want to submit?`);
     if(!verify) return;
