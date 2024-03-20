@@ -3,15 +3,9 @@
 import cancellablePromise from '/src/utilities/cancellablePromise'
 
 const BLOG_URL = import.meta.env.VITE_BLOG_URL;
-const BLOG_USERNAME = import.meta.env.VITE_BLOG_USERNAME;
-const BLOG_PASSWORD = import.meta.env.VITE_BLOG_PASSWORD;
 
 // Logging in and stuff 
-
 function login(username, password){ 
-    
-    if(!username) username=BLOG_USERNAME;
-    if(!password) password=BLOG_PASSWORD;
     
     return cancellablePromise(
     fetch(`${BLOG_URL}/dashboard/login`, { method:'POST', credentials: 'include', body: JSON.stringify({username, password}), headers: {'Content-type': 'application/json'}})

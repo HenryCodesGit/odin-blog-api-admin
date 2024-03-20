@@ -107,7 +107,7 @@ function App() {
     if(!verify) return;
 
     //Update or create post depending on if PID is supplied1
-    const [response] = (pid) ? blogAPI.makePost({title, details}) : blogAPI.updatePost({pid, title, details});
+    const [response] = (!pid) ? blogAPI.makePost({title, details}) : blogAPI.updatePost({pid, title, details});
     response
       .then((res)=>{
         if(!res) throw new Error('There was an error with creating/updating the post');
