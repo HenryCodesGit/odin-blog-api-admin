@@ -41,6 +41,7 @@ function checkLogin(){return cancellablePromise(
 function makePost({title, details}){
     
     console.log(JSON.stringify({title, details}));
+    throw new Error();
     
     return cancellablePromise(
     fetch(`${BLOG_URL}/blog/post`, { method:'POST', mode: 'cors', credentials: 'include', body: JSON.stringify({title, details}), headers: {'Content-type': 'application/json'}})
