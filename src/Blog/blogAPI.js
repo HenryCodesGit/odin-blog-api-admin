@@ -8,7 +8,7 @@ const BLOG_URL = import.meta.env.VITE_BLOG_URL;
 function login(username, password){ 
     
     return cancellablePromise(
-    fetch(`${BLOG_URL}/dashboard/login`, { method:'POST', body: JSON.stringify({username, password}), headers: {'Content-type': 'application/json'}})
+    fetch(`${BLOG_URL}/dashboard/login`, { method:'POST', credentials: 'include', body: JSON.stringify({username, password}), headers: {'Content-type': 'application/json'}})
     .then(res=> {
         if(res.ok) return res;
         return Promise.reject({status: res.status, statusText: res.statusText});
