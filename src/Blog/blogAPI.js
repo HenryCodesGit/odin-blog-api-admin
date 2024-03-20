@@ -38,7 +38,11 @@ function checkLogin(){return cancellablePromise(
 
 // CRUD for posts 
 
-function makePost({title, details}){return cancellablePromise(
+function makePost({title, details}){
+    
+    console.log(JSON.stringify({title, details}));
+    
+    return cancellablePromise(
     fetch(`${BLOG_URL}/blog/post`, { method:'POST', mode: 'cors', credentials: 'include', body: JSON.stringify({title, details}), headers: {'Content-type': 'application/json'}})
     .then(res=> {
         if(res.ok) return true;
