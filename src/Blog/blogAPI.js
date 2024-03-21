@@ -39,10 +39,6 @@ function checkLogin(){return cancellablePromise(
 // CRUD for posts 
 
 function makePost({title, details}){
-    
-    console.log(JSON.stringify({title, details}));
-    throw new Error();
-    
     return cancellablePromise(
     fetch(`${BLOG_URL}/blog/post`, { method:'POST', mode: 'cors', credentials: 'include', body: JSON.stringify({title, details}), headers: {'Content-type': 'application/json'}})
     .then(res=> {
@@ -92,10 +88,9 @@ function getPosts({start = 0, limit = 10} = {}){
 
 // CRUD For Comments 
 
-function getComments({pid, start = 0, limit = 10} = {}){
-    console.log(`${BLOG_URL}/blog/post/${pid}/comments?start=${start}&limit=${limit}`);
+function getComments({pid}){
     return cancellablePromise(
-    fetch(`${BLOG_URL}/blog/post/${pid}/comments?start=${start}&limit=${limit}`)
+    fetch(`${BLOG_URL}/blog/post/${pid}/comments`)
     .then(res=> res.json())
     .catch(err=>Promise.reject({status: err.status, statusText: err.statusText}))
 )}
@@ -109,17 +104,14 @@ function getComment({pid, cid}){
 
 function deleteComment({pid,cid}){return cancellablePromise(
     fetch(`${BLOG_URL}/blog/post/${pid}/comment/${cid}`, { method:'DELETE', mode: 'cors', credentials: 'include'})
-    .then(res=> {
-        if(res.ok) return true;
-        return Promise.reject({status: res.status, statusText: res.statusText});
-    })
+    .then(res=> res.json())
     .catch(err=>Promise.reject({status: err.status, statusText: err.statusText}))
 )}
 
-function makeComment({pid, details}){return cancellablePromise(
-    fetch(`${BLOG_URL}/blog/post/${pid}/comment`, { method:'POST', mode: 'cors', body: JSON.stringify({details}), headers: {'Content-type': 'application/json'}})
+function makeComment({pid, name, details}){return cancellablePromise(
+    fetch(`${BLOG_URL}/blog/post/${pid}/comment`, { method:'POST', mode: 'cors', credentials: 'include', body: JSON.stringify({name, details}), headers: {'Content-type': 'application/json'}})
     .then(res=> {
-        if(res.ok) return true;
+        if(res.ok) return res.json();
         return Promise.reject({status: res.status, statusText: res.statusText});
     })
     .catch(err=>Promise.reject({status: err.status, statusText: err.statusText}))

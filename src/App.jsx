@@ -10,10 +10,13 @@ function App() {
 
   const [loggedIn, setLoggedIn] = useState();
   const [posts, setPosts] = useState();
+  const [comments, setComments] = useState();
   const modalRef = useRef();
   const titleRef = useRef();
   const textAreaRef = useRef();
   const hiddenRef = useRef();
+
+  const commentsDialogRef = useRef();
 
   const [editor] = useState(new Stackedit());
 
@@ -134,7 +137,55 @@ function App() {
       .then((data)=>showForm(data.details))
       .catch((err)=>{console.log('Something went wrong',err)});
   }
+
+  function viewComments(pid){
+      const [responses] = blogAPI.getComments({pid});
+      responses
+        .then((data)=>{
+          if(!data.details) throw {status: 404, statusText: 'Not found'};
+          setComments(data.details);
+          console.log(data.details);
+          commentsDialogRef.current.showModal();
+        })
+        .catch((err)=>{
+          if(err.status === 404) return alert('No comments found');
+          alert('Something went wrong'); //TODO BEtter error handling later
+          console.log(err);
+        });
+  }
+
+  function deleteComment(pid,cid){
+    const verify = window.confirm('Are you sure you want to delete this comment?');
+    if(!verify) return console.log('NOT VERIFY');
+
+    const [response] = blogAPI.deleteComment({pid,cid});
+    response
+      .then((res)=>{
+        if(!res.details) throw {status: 500, statusText:'Something went wrong'}
+
+        console.log(res.details.cid);
+        const newComments = comments.filter((comment)=>{
+          return comment.cid !== res.details.cid;
+        });
+
+        setComments(newComments);
+        if(!newComments.length){
+          alert('All comments have been deleted. Closing window');
+          closeCommentsAndClear();
+        }
+      })
+      .catch((err)=>{
+        console.log('Issues',err);
+        console.log(err);
+      });
+
+  }
   
+  function closeCommentsAndClear(){
+    commentsDialogRef.current.close();
+    setComments(null);
+  }
+
   // Check if logged in when page is loaded.
   useEffect(()=>{
     const {cancelCheck} = checkLogin();
@@ -199,6 +250,7 @@ function App() {
                 <td className='optionsColumn'>
                   <button onClick={()=>deletePost(pid, title)}>Delete</button>
                   <button onClick={()=>editPost(pid)}>Edit</button>
+                  <button onClick={()=>viewComments(pid)}>View Comments</button>
                 </td>
               </tr>)
             })}
@@ -235,11 +287,42 @@ function App() {
       </div>
     )
 
+  const commentsComponent = (
+    <dialog ref = {commentsDialogRef}>
+        <button onClick={closeCommentsAndClear}>Close</button>
+        <table>
+          <thead>
+            <tr>
+              <th>CID</th>
+              <th>Name</th>
+              <th>Details</th>
+              <th>Created</th>
+              <th>Options</th>
+            </tr>
+          </thead>
+          <tbody>
+            {(!comments) ? null : comments.map(({cid,name,details,created_at,post_id: pid}) => {
+              return (
+              <tr key={cid}>
+                <td>{cid}</td>
+                <td>{name}</td>
+                <td>{details}</td>
+                <td>{created_at}</td>
+                <td className='optionsColumn'>
+                  <button onClick={()=>deleteComment(pid,cid)}>Delete</button>
+                </td>
+              </tr>)
+            })}
+          </tbody>
+        </table>
+    </dialog>
+  )
   //Otherwise return login form
   return (<>
     {loginComponent}
     {modalComponent}
     {postComponent}
+    {commentsComponent}
   </>);
 }
 
