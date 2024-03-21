@@ -5,14 +5,12 @@ export default function cancellablePromise(promise){
         promise
         .then((val)=>{ 
             if(_isCancelled){
-                console.log('Promise was cancelled');
                 return reject({isCancelled: true})
             }
             return resolve(val);
         })
         .catch((err)=>{ 
             if(_isCancelled){
-                console.log('Promise was cancelled');
                 return reject({isCancelled: true})
             }
             return reject(err);
@@ -22,7 +20,6 @@ export default function cancellablePromise(promise){
     return [ 
         wrappedPromise, 
         function cancel(){ 
-            console.log('Cancelling promise');
             _isCancelled = true;
         }
     ];

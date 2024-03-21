@@ -77,7 +77,6 @@ function deletePost(pid){return cancellablePromise(
 )}
 
 function getPosts({start = 0, limit = 10} = {}){
-    console.log(BLOG_URL);
     return cancellablePromise(
     fetch(`${BLOG_URL}/blog/posts?start=${start}&limit=${limit}`, { method:'GET', credentials: 'include'})
     .then(res=> res.json())
