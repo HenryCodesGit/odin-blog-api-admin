@@ -144,7 +144,6 @@ function App() {
         .then((data)=>{
           if(!data.details) throw {status: 404, statusText: 'Not found'};
           setComments(data.details);
-          console.log(data.details);
           commentsDialogRef.current.showModal();
         })
         .catch((err)=>{
@@ -162,8 +161,6 @@ function App() {
     response
       .then((res)=>{
         if(!res.details) throw {status: 500, statusText:'Something went wrong'}
-
-        console.log(res.details.cid);
         const newComments = comments.filter((comment)=>{
           return comment.cid !== res.details.cid;
         });
